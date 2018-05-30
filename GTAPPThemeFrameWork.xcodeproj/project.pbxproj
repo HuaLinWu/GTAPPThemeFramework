@@ -10,6 +10,38 @@
 		FECAE07620BC2879001A3ACE /* GTAPPThemeFrameWork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FECAE06C20BC2879001A3ACE /* GTAPPThemeFrameWork.framework */; };
 		FECAE07B20BC2879001A3ACE /* GTAPPThemeFrameWorkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE07A20BC2879001A3ACE /* GTAPPThemeFrameWorkTests.m */; };
 		FECAE07D20BC2879001A3ACE /* GTAPPThemeFrameWork.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE06F20BC2879001A3ACE /* GTAPPThemeFrameWork.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE09520BC291E001A3ACE /* GTThemeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE09220BC291E001A3ACE /* GTThemeManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE09620BC291E001A3ACE /* GTThemeDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE09320BC291E001A3ACE /* GTThemeDefine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE09720BC291E001A3ACE /* GTThemeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE09420BC291E001A3ACE /* GTThemeManager.m */; };
+		FECAE09A20BC29EF001A3ACE /* UIView+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE09920BC29EE001A3ACE /* UIView+GTTheme.m */; };
+		FECAE09E20BC2C4A001A3ACE /* UIView+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE09820BC29EE001A3ACE /* UIView+GTTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE0A120BC2D2B001A3ACE /* UIButton+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE09F20BC2D2A001A3ACE /* UIButton+GTTheme.m */; };
+		FECAE0A220BC2D2B001A3ACE /* UIButton+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0A020BC2D2B001A3ACE /* UIButton+GTTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE0A820BC2D7F001A3ACE /* UILabel+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0A620BC2D7F001A3ACE /* UILabel+GTTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE0A920BC2D7F001A3ACE /* UILabel+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0A720BC2D7F001A3ACE /* UILabel+GTTheme.m */; };
+		FECAE0AC20BC2D89001A3ACE /* UIImageView+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0AA20BC2D89001A3ACE /* UIImageView+GTTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE0AD20BC2D89001A3ACE /* UIImageView+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0AB20BC2D89001A3ACE /* UIImageView+GTTheme.m */; };
+		FECAE0B420BC2DB6001A3ACE /* UIBarButtonItem+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0B220BC2DB5001A3ACE /* UIBarButtonItem+GTTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FECAE0B520BC2DB6001A3ACE /* UIBarButtonItem+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0B320BC2DB5001A3ACE /* UIBarButtonItem+GTTheme.m */; };
+		FECAE0B620BC4C16001A3ACE /* NSObject+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE09020BC28B0001A3ACE /* NSObject+GTTheme.m */; };
+		FECAE0B920BC4CA4001A3ACE /* NSObjectDellocManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0B720BC4CA4001A3ACE /* NSObjectDellocManager.h */; };
+		FECAE0BA20BC4CA4001A3ACE /* NSObjectDellocManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0B820BC4CA4001A3ACE /* NSObjectDellocManager.m */; };
+		FECAE0BD20BC5094001A3ACE /* UITableViewCell+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0BB20BC5094001A3ACE /* UITableViewCell+GTTheme.h */; };
+		FECAE0BE20BC5094001A3ACE /* UITableViewCell+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0BC20BC5094001A3ACE /* UITableViewCell+GTTheme.m */; };
+		FECAE0C520BC50D6001A3ACE /* UICollectionViewCell+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0C320BC50D6001A3ACE /* UICollectionViewCell+GTTheme.h */; };
+		FECAE0C620BC50D6001A3ACE /* UICollectionViewCell+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0C420BC50D6001A3ACE /* UICollectionViewCell+GTTheme.m */; };
+		FECAE0C920BC5101001A3ACE /* UIDatePicker+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0C720BC5101001A3ACE /* UIDatePicker+GTTheme.h */; };
+		FECAE0CA20BC5101001A3ACE /* UIDatePicker+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0C820BC5101001A3ACE /* UIDatePicker+GTTheme.m */; };
+		FECAE0CD20BC5119001A3ACE /* UIPickerView+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0CB20BC5119001A3ACE /* UIPickerView+GTTheme.h */; };
+		FECAE0CE20BC5119001A3ACE /* UIPickerView+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0CC20BC5119001A3ACE /* UIPickerView+GTTheme.m */; };
+		FECAE0D120BC5160001A3ACE /* UIProgressView+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0CF20BC5160001A3ACE /* UIProgressView+GTTheme.h */; };
+		FECAE0D220BC5160001A3ACE /* UIProgressView+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0D020BC5160001A3ACE /* UIProgressView+GTTheme.m */; };
+		FECAE0D520BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0D320BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.h */; };
+		FECAE0D620BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0D420BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.m */; };
+		FECAE0D920BC519F001A3ACE /* UIPageControl+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0D720BC519F001A3ACE /* UIPageControl+GTTheme.h */; };
+		FECAE0DA20BC519F001A3ACE /* UIPageControl+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0D820BC519F001A3ACE /* UIPageControl+GTTheme.m */; };
+		FECAE0DD20BC5205001A3ACE /* UITextField+GTTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = FECAE0DB20BC5205001A3ACE /* UITextField+GTTheme.h */; };
+		FECAE0DE20BC5205001A3ACE /* UITextField+GTTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = FECAE0DC20BC5205001A3ACE /* UITextField+GTTheme.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +61,39 @@
 		FECAE07520BC2879001A3ACE /* GTAPPThemeFrameWorkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GTAPPThemeFrameWorkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FECAE07A20BC2879001A3ACE /* GTAPPThemeFrameWorkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GTAPPThemeFrameWorkTests.m; sourceTree = "<group>"; };
 		FECAE07C20BC2879001A3ACE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FECAE08F20BC28AF001A3ACE /* NSObject+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE09020BC28B0001A3ACE /* NSObject+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE09220BC291E001A3ACE /* GTThemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTThemeManager.h; sourceTree = "<group>"; };
+		FECAE09320BC291E001A3ACE /* GTThemeDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTThemeDefine.h; sourceTree = "<group>"; };
+		FECAE09420BC291E001A3ACE /* GTThemeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTThemeManager.m; sourceTree = "<group>"; };
+		FECAE09820BC29EE001A3ACE /* UIView+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE09920BC29EE001A3ACE /* UIView+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE09F20BC2D2A001A3ACE /* UIButton+GTTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0A020BC2D2B001A3ACE /* UIButton+GTTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0A620BC2D7F001A3ACE /* UILabel+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UILabel+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0A720BC2D7F001A3ACE /* UILabel+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UILabel+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0AA20BC2D89001A3ACE /* UIImageView+GTTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0AB20BC2D89001A3ACE /* UIImageView+GTTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0B220BC2DB5001A3ACE /* UIBarButtonItem+GTTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0B320BC2DB5001A3ACE /* UIBarButtonItem+GTTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0B720BC4CA4001A3ACE /* NSObjectDellocManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSObjectDellocManager.h; sourceTree = "<group>"; };
+		FECAE0B820BC4CA4001A3ACE /* NSObjectDellocManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSObjectDellocManager.m; sourceTree = "<group>"; };
+		FECAE0BB20BC5094001A3ACE /* UITableViewCell+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0BC20BC5094001A3ACE /* UITableViewCell+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0C320BC50D6001A3ACE /* UICollectionViewCell+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UICollectionViewCell+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0C420BC50D6001A3ACE /* UICollectionViewCell+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UICollectionViewCell+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0C720BC5101001A3ACE /* UIDatePicker+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDatePicker+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0C820BC5101001A3ACE /* UIDatePicker+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0CB20BC5119001A3ACE /* UIPickerView+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIPickerView+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0CC20BC5119001A3ACE /* UIPickerView+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIPickerView+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0CF20BC5160001A3ACE /* UIProgressView+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIProgressView+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0D020BC5160001A3ACE /* UIProgressView+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIProgressView+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0D320BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIActivityIndicatorView+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0D420BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIActivityIndicatorView+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0D720BC519F001A3ACE /* UIPageControl+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIPageControl+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0D820BC519F001A3ACE /* UIPageControl+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIPageControl+GTTheme.m"; sourceTree = "<group>"; };
+		FECAE0DB20BC5205001A3ACE /* UITextField+GTTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITextField+GTTheme.h"; sourceTree = "<group>"; };
+		FECAE0DC20BC5205001A3ACE /* UITextField+GTTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITextField+GTTheme.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +137,39 @@
 			isa = PBXGroup;
 			children = (
 				FECAE06F20BC2879001A3ACE /* GTAPPThemeFrameWork.h */,
+				FECAE08F20BC28AF001A3ACE /* NSObject+GTTheme.h */,
+				FECAE09020BC28B0001A3ACE /* NSObject+GTTheme.m */,
+				FECAE0B720BC4CA4001A3ACE /* NSObjectDellocManager.h */,
+				FECAE0B820BC4CA4001A3ACE /* NSObjectDellocManager.m */,
+				FECAE09320BC291E001A3ACE /* GTThemeDefine.h */,
+				FECAE09220BC291E001A3ACE /* GTThemeManager.h */,
+				FECAE09420BC291E001A3ACE /* GTThemeManager.m */,
+				FECAE09820BC29EE001A3ACE /* UIView+GTTheme.h */,
+				FECAE09920BC29EE001A3ACE /* UIView+GTTheme.m */,
+				FECAE0A020BC2D2B001A3ACE /* UIButton+GTTheme.h */,
+				FECAE09F20BC2D2A001A3ACE /* UIButton+GTTheme.m */,
+				FECAE0A620BC2D7F001A3ACE /* UILabel+GTTheme.h */,
+				FECAE0A720BC2D7F001A3ACE /* UILabel+GTTheme.m */,
+				FECAE0AA20BC2D89001A3ACE /* UIImageView+GTTheme.h */,
+				FECAE0AB20BC2D89001A3ACE /* UIImageView+GTTheme.m */,
+				FECAE0B220BC2DB5001A3ACE /* UIBarButtonItem+GTTheme.h */,
+				FECAE0B320BC2DB5001A3ACE /* UIBarButtonItem+GTTheme.m */,
+				FECAE0BB20BC5094001A3ACE /* UITableViewCell+GTTheme.h */,
+				FECAE0BC20BC5094001A3ACE /* UITableViewCell+GTTheme.m */,
+				FECAE0C320BC50D6001A3ACE /* UICollectionViewCell+GTTheme.h */,
+				FECAE0C420BC50D6001A3ACE /* UICollectionViewCell+GTTheme.m */,
+				FECAE0C720BC5101001A3ACE /* UIDatePicker+GTTheme.h */,
+				FECAE0C820BC5101001A3ACE /* UIDatePicker+GTTheme.m */,
+				FECAE0CB20BC5119001A3ACE /* UIPickerView+GTTheme.h */,
+				FECAE0CC20BC5119001A3ACE /* UIPickerView+GTTheme.m */,
+				FECAE0CF20BC5160001A3ACE /* UIProgressView+GTTheme.h */,
+				FECAE0D020BC5160001A3ACE /* UIProgressView+GTTheme.m */,
+				FECAE0D320BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.h */,
+				FECAE0D420BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.m */,
+				FECAE0D720BC519F001A3ACE /* UIPageControl+GTTheme.h */,
+				FECAE0D820BC519F001A3ACE /* UIPageControl+GTTheme.m */,
+				FECAE0DB20BC5205001A3ACE /* UITextField+GTTheme.h */,
+				FECAE0DC20BC5205001A3ACE /* UITextField+GTTheme.m */,
 				FECAE07020BC2879001A3ACE /* Info.plist */,
 			);
 			path = GTAPPThemeFrameWork;
@@ -93,6 +191,22 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FECAE0B420BC2DB6001A3ACE /* UIBarButtonItem+GTTheme.h in Headers */,
+				FECAE0BD20BC5094001A3ACE /* UITableViewCell+GTTheme.h in Headers */,
+				FECAE0D920BC519F001A3ACE /* UIPageControl+GTTheme.h in Headers */,
+				FECAE0A820BC2D7F001A3ACE /* UILabel+GTTheme.h in Headers */,
+				FECAE0AC20BC2D89001A3ACE /* UIImageView+GTTheme.h in Headers */,
+				FECAE0A220BC2D2B001A3ACE /* UIButton+GTTheme.h in Headers */,
+				FECAE0D520BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.h in Headers */,
+				FECAE0B920BC4CA4001A3ACE /* NSObjectDellocManager.h in Headers */,
+				FECAE09E20BC2C4A001A3ACE /* UIView+GTTheme.h in Headers */,
+				FECAE0DD20BC5205001A3ACE /* UITextField+GTTheme.h in Headers */,
+				FECAE0C920BC5101001A3ACE /* UIDatePicker+GTTheme.h in Headers */,
+				FECAE09520BC291E001A3ACE /* GTThemeManager.h in Headers */,
+				FECAE0D120BC5160001A3ACE /* UIProgressView+GTTheme.h in Headers */,
+				FECAE0C520BC50D6001A3ACE /* UICollectionViewCell+GTTheme.h in Headers */,
+				FECAE0CD20BC5119001A3ACE /* UIPickerView+GTTheme.h in Headers */,
+				FECAE09620BC291E001A3ACE /* GTThemeDefine.h in Headers */,
 				FECAE07D20BC2879001A3ACE /* GTAPPThemeFrameWork.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,6 +307,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FECAE0DE20BC5205001A3ACE /* UITextField+GTTheme.m in Sources */,
+				FECAE0DA20BC519F001A3ACE /* UIPageControl+GTTheme.m in Sources */,
+				FECAE0BE20BC5094001A3ACE /* UITableViewCell+GTTheme.m in Sources */,
+				FECAE0C620BC50D6001A3ACE /* UICollectionViewCell+GTTheme.m in Sources */,
+				FECAE0BA20BC4CA4001A3ACE /* NSObjectDellocManager.m in Sources */,
+				FECAE0B620BC4C16001A3ACE /* NSObject+GTTheme.m in Sources */,
+				FECAE0D220BC5160001A3ACE /* UIProgressView+GTTheme.m in Sources */,
+				FECAE0A120BC2D2B001A3ACE /* UIButton+GTTheme.m in Sources */,
+				FECAE0A920BC2D7F001A3ACE /* UILabel+GTTheme.m in Sources */,
+				FECAE09720BC291E001A3ACE /* GTThemeManager.m in Sources */,
+				FECAE0D620BC5184001A3ACE /* UIActivityIndicatorView+GTTheme.m in Sources */,
+				FECAE0B520BC2DB6001A3ACE /* UIBarButtonItem+GTTheme.m in Sources */,
+				FECAE09A20BC29EF001A3ACE /* UIView+GTTheme.m in Sources */,
+				FECAE0CE20BC5119001A3ACE /* UIPickerView+GTTheme.m in Sources */,
+				FECAE0AD20BC2D89001A3ACE /* UIImageView+GTTheme.m in Sources */,
+				FECAE0CA20BC5101001A3ACE /* UIDatePicker+GTTheme.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,13 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
-//! Project version number for GTAPPThemeFrameWork.
-FOUNDATION_EXPORT double GTAPPThemeFrameWorkVersionNumber;
-
-//! Project version string for GTAPPThemeFrameWork.
-FOUNDATION_EXPORT const unsigned char GTAPPThemeFrameWorkVersionString[];
-
+#import "GTThemeManager.h"
+#import "GTThemeDefine.h"
+#import "UIView+GTTheme.h"
+#import "UIButton+GTTheme.h"
+#import "UILabel+GTTheme.h"
+#import "UIImageView+GTTheme.h"
+#import "UIBarButtonItem+GTTheme.h"
 // In this header, you should import all the public headers of your framework using statements like #import <GTAPPThemeFrameWork/PublicHeader.h>
-
 
