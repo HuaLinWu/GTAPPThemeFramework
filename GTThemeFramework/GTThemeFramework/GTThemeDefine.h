@@ -16,12 +16,11 @@
 
  @param OBJ 对象
  @param PATH 数显
- @param PARAM 参数
  @return 返回
  */
-#define GTThemeSetValuesForProperty(OBJ,PATH,PARAM)\
+#define GTThemeSetValuesForProperty(OBJ,PATH,...)\
 ((void)(NO && ((void)OBJ.PATH, NO)),\
-[OBJ gt_setThemeObjectsWithSeletor:@selector(setValue:forKey:) params:PARAM,@(#PATH),nil])
+[OBJ gt_setThemeObjectsWithSeletor:@selector(setValue:forKey:) params:__VA_ARGS__,@(#PATH),nil])
 
 /**
  主题的枚举
