@@ -15,93 +15,91 @@
 @end
 @implementation NSObject (GTTheme)
 #pragma mark public
-- (void)cacheThemeObjectsWithSeletor:(SEL)seletor fristParams:(NSArray *)firstParams {
-    if(!seletor || !firstParams || ![firstParams isKindOfClass:[NSArray class]]) return;
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
+
+- (void)gt_setThemeObjectsWithSeletor:(SEL)seletor params:(id)params,...NS_REQUIRES_NIL_TERMINATION {
+     NSUInteger themeVersion = [GTThemeManager shareInstance].currentThemeVersion;
+     NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
     if(methodSignature) {
-        for(NSUInteger i=0;i<firstParams.count;i++) {
-            NSString *themeVersion = [NSString stringWithFormat:@"%li",i];
-            NSMutableArray*ayInvocation = self.pickerDict[themeVersion];
-            if(!ayInvocation) {
-                ayInvocation = [[NSMutableArray alloc] init];
-                [self.pickerDict setObject:ayInvocation forKey:themeVersion];
-            }
-            //构造NSInvocation
-            
-            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-            invocation.target = self;
-            invocation.selector = seletor;
-            id param = firstParams[i];
-            [invocation setArgument:&param atIndex:2];
-            [ayInvocation addObject:invocation];
-        }
-    }
-}
-- (void)cacheThemeObjectsWithSeletor:(SEL)seletor fristParams:(NSArray *)firstParams secondParams:(NSArray *)secondParams {
-    
-    if(!seletor || !firstParams || ![firstParams isKindOfClass:[NSArray class]] || ![secondParams isKindOfClass:[NSArray class]] || firstParams.count !=secondParams.count) return;
-    
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
-    if(methodSignature) {
-        for(NSUInteger i=0;i<firstParams.count;i++) {
-            NSString *themeVersion = [NSString stringWithFormat:@"%li",i];
-            NSMutableArray*ayInvocation = self.pickerDict[themeVersion];
-            if(!ayInvocation) {
-                ayInvocation = [[NSMutableArray alloc] init];
-                [self.pickerDict setObject:ayInvocation forKey:themeVersion];
-            }
-            //构造NSInvocation
-            
-            NSInvocation *invocation = [[NSInvocation alloc] init];
-            invocation.target = self;
-            invocation.selector = seletor;
-            id firstParam = firstParams[i];
-            [invocation setArgument:&firstParam atIndex:2];
-            
-            id secondParam = secondParams[i];
-            if(strcmp([methodSignature getArgumentTypeAtIndex:3], "Q") ==0) {
-                NSUInteger temoSecond = [secondParam unsignedIntegerValue];
-                [invocation setArgument:&temoSecond atIndex:3];
-                
+         //1.先执行一下方法
+        va_list args;
+        NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
+        if(params) {
+            if([params isKindOfClass:[NSArray class]]) {
+                //如果可变参数第一个参数是数组的时候
+                NSArray *ayParams = (NSArray *)params;
+                if(ayParams.count > themeVersion) {
+                    void *fristParam = (__bridge void *)(ayParams[themeVersion]);
+                    [self setArgumentToInvocation:invocation argument:&fristParam atIndex:2];
+                    int index = 3;
+                    va_start(args, params);
+                    void *tempParam = NULL;
+                    while((tempParam =va_arg(args, void *))!=NULL) {
+                        
+                        [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
+                        index++;
+                    }
+                }
             } else {
-                 [invocation setArgument:&secondParam atIndex:3];
+                //如果可变参数第一个不是数组的时候（需要判断参数类型是否相符）
+                [self setArgumentToInvocation:invocation argument:&params atIndex:2];
+                int index = 3;
+                va_start(args, params);
+                 void *tempParam = NULL;
+                while((tempParam =va_arg(args, void *))!=NULL) {
+                     [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
+                    index++;
+                }
             }
-           
-            [ayInvocation addObject:invocation];
-        }
-    }
-}
-- (void)gt_setThemeObjectsWithSeletor:(SEL)seletor fristParams:(NSArray *)firstParams secondParams:(NSArray *)secondParams{
-    NSUInteger themeVersion = [GTThemeManager shareInstance].currentThemeVersion;
-    
-    if(!firstParams || ![firstParams isKindOfClass:[NSArray class]] || firstParams.count <=themeVersion || ![self respondsToSelector:seletor]) return;
-    
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
-    
-    id first = firstParams[themeVersion];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-    invocation.target = self;
-    invocation.selector = seletor;
-    [invocation setArgument:&first atIndex:2];
-    
-    if ([methodSignature numberOfArguments] > 3) {
-        if (!secondParams || ![secondParams isKindOfClass:[NSArray class]] || secondParams.count <=themeVersion || secondParams.count != firstParams.count) {
-            return;
-        }else{
-            id second = secondParams[themeVersion];
             
-            if(strcmp([methodSignature getArgumentTypeAtIndex:3], "Q") ==0) {
-                NSUInteger temoSecond = [second unsignedIntegerValue];
-                [invocation setArgument:&temoSecond atIndex:3];
-            } else {
-                [invocation setArgument:&second atIndex:3];
-            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
             [invocation invoke];
-            [self cacheThemeObjectsWithSeletor:seletor fristParams:firstParams secondParams:secondParams];
+        });
+        //2.缓存invocation
+        if(params) {
+            if([params isKindOfClass:[NSArray class]]) {
+                NSArray *ayParams = (NSArray *)params;
+                for(NSUInteger i=0;i<ayParams.count;i++) {
+                    NSMutableArray*ayInvocation = [self getAyInvocationFromThemeVersion:i];
+                    //构造NSInvocation
+                    NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
+                    id firstParam = ayParams[i];
+                    [self setArgumentToInvocation:invocation argument:&firstParam atIndex:2];
+                    
+                    int index = 3;
+                     va_start(args, params);
+                    void *tempParam = NULL;
+                    while((tempParam =va_arg(args, void *))!=NULL){
+                        [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
+                        index++;
+                    }
+                    [ayInvocation addObject:invocation];
+                }
+            } else {
+                //可变参数第一个不是数组的时候
+                NSMutableArray*ayInvocation = [self getAyInvocationFromThemeVersion:0];
+                //构造NSInvocation
+                NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
+                id firstParam = params;
+                [self setArgumentToInvocation:invocation argument:&firstParam atIndex:2];
+                
+                int index = 3;
+                va_start(args, params);
+                void *tempParam = NULL;
+                while((tempParam =va_arg(args, void *))!=NULL) {
+                     [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
+                    index++;
+                }
+                [ayInvocation addObject:invocation];
+            }
+        } else {
+            NSMutableArray*ayInvocation = [self getAyInvocationFromThemeVersion:0];
+            //构造NSInvocation
+            NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
+            [ayInvocation addObject:invocation];
         }
-    }else{
-        [invocation invoke];
-        [self cacheThemeObjectsWithSeletor:seletor fristParams:firstParams];
+        //3.清空参数列表，
+        va_end(args);
     }
 }
 #pragma mark private_method
@@ -109,11 +107,39 @@
     NSString *themeVersion = [NSString stringWithFormat:@"%li",[GTThemeManager shareInstance].currentThemeVersion];
     NSMutableArray *ayInvocation = self.pickerDict[themeVersion];
     [ayInvocation enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [obj invoke];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [obj invoke];
+        });
+        
     }];
-    
+}
+- (NSInvocation *)createInvocationWithSeletor:(SEL)seletor {
+      NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
+    NSInvocation *invocation = nil;
+    if(methodSignature) {
+        invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+        invocation.target = self;
+        invocation.selector = seletor;
+    }
+    return invocation;
+}
+- (void)setArgumentToInvocation:(NSInvocation *)invocation argument:(void *)argument atIndex:(NSInteger)index {
+    if(invocation){
+        if(index>1 && index< [invocation methodSignature].numberOfArguments && argument!=NULL) {
+            [invocation setArgument:argument atIndex:index];
+        }
+    }
 }
 #pragma mark set/get
+- (NSMutableArray *)getAyInvocationFromThemeVersion:(GTThemeVersion)themeVersion {
+    NSString *strThemeVersion = [NSString stringWithFormat:@"%li",themeVersion];
+    NSMutableArray*ayInvocation = self.pickerDict[strThemeVersion];
+    if(!ayInvocation) {
+        ayInvocation = [[NSMutableArray alloc] init];
+        [self.pickerDict setObject:ayInvocation forKey:strThemeVersion];
+    }
+    return ayInvocation;
+}
 - (NSMutableDictionary<NSString *,NSMutableArray<NSInvocation *> *> *)pickerDict {
     
     NSMutableDictionary<NSString *,NSMutableArray<NSInvocation *> *> *pickerDict = objc_getAssociatedObject(self, @selector(pickerDict));
