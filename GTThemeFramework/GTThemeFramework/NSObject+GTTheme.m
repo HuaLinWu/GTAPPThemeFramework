@@ -10,18 +10,37 @@
 #import <objc/runtime.h>
 #import "GTThemeManager.h"
 #import "GTObjectDeallocManager.h"
+//安全的主线成执行
+#ifndef dispatch_main_async_safe
+#define dispatch_main_async_safe(block)\
+if ([NSThread isMainThread]) {\
+block();\
+} else {\
+dispatch_async(dispatch_get_main_queue(), block);\
+}
+#endif
 @interface NSObject()
 @property(nonatomic,strong)NSMutableDictionary<NSString *,NSMutableArray<NSInvocation *> *> *pickerDict;
 @end
 @implementation NSObject (GTTheme)
 #pragma mark public
 
-- (void)gt_setThemeObjectsWithSeletor:(SEL)seletor params:(id)params,...NS_REQUIRES_NIL_TERMINATION {
-     NSUInteger themeVersion = [GTThemeManager shareInstance].currentThemeVersion;
-     NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
+- (void)gt_setThemeObjectsWithSeletor:(SEL)seletor params:(id _Nonnull)params,...NS_REQUIRES_NIL_TERMINATION {
+    NSMutableArray *muAyOtherParams = [[NSMutableArray alloc] init];
+    //1.先执行一下方法
+    va_list args;
+    va_start(args, params);
+    void *tempParam = NULL;
+    while((tempParam =va_arg(args, void *))!=NULL) {
+        [muAyOtherParams addObject:[NSValue valueWithPointer:tempParam]];
+    }
+    //3.清空参数列表，
+    va_end(args);
+    dispatch_main_async_safe(^{
+    NSUInteger themeVersion = [GTThemeManager shareInstance].currentThemeVersion;
+    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
     if(methodSignature) {
-         //1.先执行一下方法
-        va_list args;
+        
         NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
         if(params) {
             if([params isKindOfClass:[NSArray class]]) {
@@ -30,31 +49,23 @@
                 if(ayParams.count > themeVersion) {
                     void *fristParam = (__bridge void *)(ayParams[themeVersion]);
                     [self setArgumentToInvocation:invocation argument:&fristParam atIndex:2];
-                    int index = 3;
-                    va_start(args, params);
-                    void *tempParam = NULL;
-                    while((tempParam =va_arg(args, void *))!=NULL) {
-                        
-                        [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
-                        index++;
+                    for(int index=0;index<muAyOtherParams.count;index++) {
+                        void *tempParam = [muAyOtherParams[index] pointerValue];
+                        [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index+3];
                     }
+                    
                 }
             } else {
                 //如果可变参数第一个不是数组的时候（需要判断参数类型是否相符）
-                [self setArgumentToInvocation:invocation argument:&params atIndex:2];
-                int index = 3;
-                va_start(args, params);
-                 void *tempParam = NULL;
-                while((tempParam =va_arg(args, void *))!=NULL) {
-                     [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
-                    index++;
+                [self setArgumentToInvocation:invocation argument:(void *)&params atIndex:2];
+                for(int index=0;index<muAyOtherParams.count;index++) {
+                    void *tempParam = [muAyOtherParams[index] pointerValue];
+                    [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index+3];
                 }
             }
             
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [invocation invoke];
-        });
+        [invocation invoke];
         //2.缓存invocation
         if(params) {
             if([params isKindOfClass:[NSArray class]]) {
@@ -65,13 +76,10 @@
                     NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
                     id firstParam = ayParams[i];
                     [self setArgumentToInvocation:invocation argument:&firstParam atIndex:2];
-                    
-                    int index = 3;
-                     va_start(args, params);
-                    void *tempParam = NULL;
-                    while((tempParam =va_arg(args, void *))!=NULL){
-                        [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
-                        index++;
+    
+                    for(int index=0;index<muAyOtherParams.count;index++) {
+                        void *tempParam = [muAyOtherParams[index] pointerValue];
+                        [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index+3];
                     }
                     [ayInvocation addObject:invocation];
                 }
@@ -83,12 +91,9 @@
                 id firstParam = params;
                 [self setArgumentToInvocation:invocation argument:&firstParam atIndex:2];
                 
-                int index = 3;
-                va_start(args, params);
-                void *tempParam = NULL;
-                while((tempParam =va_arg(args, void *))!=NULL) {
-                     [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index];
-                    index++;
+                for(int index=0;index<muAyOtherParams.count;index++) {
+                    void *tempParam = [muAyOtherParams[index] pointerValue];
+                    [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index+3];
                 }
                 [ayInvocation addObject:invocation];
             }
@@ -98,23 +103,23 @@
             NSInvocation *invocation = [self createInvocationWithSeletor:seletor];
             [ayInvocation addObject:invocation];
         }
-        //3.清空参数列表，
-        va_end(args);
     }
+        
+    });
 }
 #pragma mark private_method
 - (void)gt_updateTheme {
-    NSString *themeVersion = [NSString stringWithFormat:@"%li",[GTThemeManager shareInstance].currentThemeVersion];
+    NSString *themeVersion = [NSString stringWithFormat:@"%lu",(unsigned long)[GTThemeManager shareInstance].currentThemeVersion];
     NSMutableArray *ayInvocation = self.pickerDict[themeVersion];
-    [ayInvocation enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_main_async_safe(^{
+        [ayInvocation enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             [obj invoke];
-        });
-        
-    }];
+        }];
+    });
+    
 }
 - (NSInvocation *)createInvocationWithSeletor:(SEL)seletor {
-      NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
+    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
     NSInvocation *invocation = nil;
     if(methodSignature) {
         invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
@@ -132,7 +137,7 @@
 }
 #pragma mark set/get
 - (NSMutableArray *)getAyInvocationFromThemeVersion:(GTThemeVersion)themeVersion {
-    NSString *strThemeVersion = [NSString stringWithFormat:@"%li",themeVersion];
+    NSString *strThemeVersion = [NSString stringWithFormat:@"%lu",(unsigned long)themeVersion];
     NSMutableArray*ayInvocation = self.pickerDict[strThemeVersion];
     if(!ayInvocation) {
         ayInvocation = [[NSMutableArray alloc] init];
@@ -148,15 +153,15 @@
             GTObjectDeallocManager *manager = objc_getAssociatedObject(self, "GTObjectDeallocManager");
             __unsafe_unretained typeof(self) weakSelf = self;
             if(!manager) {
-                 manager= [[GTObjectDeallocManager alloc] init];
+                manager= [[GTObjectDeallocManager alloc] init];
                 [manager addDeallocBlock:^{
                     if(weakSelf) {
-                         [[NSNotificationCenter defaultCenter] removeObserver:weakSelf];
+                        [[NSNotificationCenter defaultCenter] removeObserver:weakSelf];
                     }
                 }];
                 objc_setAssociatedObject(self, "GTObjectDeallocManager", manager, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             }
-          
+            
         }
         pickerDict = [[NSMutableDictionary alloc] init];
         objc_setAssociatedObject(self, @selector(pickerDict), pickerDict, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -166,3 +171,4 @@
     return pickerDict;
 }
 @end
+
