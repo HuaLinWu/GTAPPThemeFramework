@@ -11,6 +11,8 @@
 //主题变化的通知
 #define GTThemeVersionChangeNotification @"GTThemeVersionChangeNotification"
 
+#define GTThemeGetMethodForProperty(PATH) \
+NSSelectorFromString([NSString stringWithFormat:@"set%@%@:",[[@(#PATH) substringToIndex:1] uppercaseString],[@(#PATH) substringFromIndex:1]])
 /**
  设置对象属性的方法调用
 
@@ -20,8 +22,11 @@
  */
 #define GTThemeSetValuesForProperty(OBJ,PATH,...)\
 ((void)(NO && ((void)OBJ.PATH, NO)),\
-[OBJ gt_setThemeObjectsWithSeletor:@selector(setValue:forKey:) params:__VA_ARGS__,@(#PATH),nil])
+[OBJ gt_setThemeObjectsAndInvokeWithSeletor:GTThemeGetMethodForProperty(PATH) params:__VA_ARGS__,nil])
 
+#define GTRemoveThemeObjectsAndInvoke(OBJ,PATH)\
+((void)(NO && ((void)OBJ.PATH, NO)),\
+[OBJ gt_setThemeObjectsAndInvokeWithSeletor:GTThemeGetMethodForProperty(PATH) params:nil])
 /**
  主题的枚举
 
