@@ -10,7 +10,6 @@
 #import <objc/runtime.h>
 #import "GTThemeManager.h"
 #import "GTObjectDeallocManager.h"
-#import "GTThemeInvocationObject.h"
 //安全的主线成执行
 #ifndef dispatch_main_async_safe
 #define dispatch_main_async_safe(block)\
@@ -21,33 +20,29 @@ dispatch_async(dispatch_get_main_queue(), block);\
 }
 #endif
 @interface NSObject()
-@property(nonatomic,strong)NSMutableDictionary<NSString *,NSMutableArray<GTThemeInvocationObject *> *> *pickerDict;
+@property(nonatomic,strong)NSMutableDictionary<NSString *,NSMutableArray<id> *> *pickerDict;
 @end
 @implementation NSObject (GTTheme)
 #pragma mark public
 
 - (void)gt_setThemeObjectsAndInvokeWithSeletor:(SEL)seletor params:(id _Nonnull)params,...NS_REQUIRES_NIL_TERMINATION {
-    NSMutableArray *muAyOtherParams = [[NSMutableArray alloc] init];
+    //获取已有的参数列表数组，如果不存在就新建一个
+    NSMutableArray *mutableAyParams = [self getAyParamsFromSeletor:seletor];
+    if(params) {
+        [mutableAyParams addObject:params];
+    }
     //1.先执行一下方法
     va_list args;
     va_start(args, params);
-    void *tempParam = NULL;
-    while((tempParam =va_arg(args, void *))!=NULL) {
-        [muAyOtherParams addObject:[NSValue valueWithPointer:tempParam]];
+    id tempParam = va_arg(args, id);
+    while(tempParam !=NULL) {
+        [mutableAyParams addObject:tempParam];
+        tempParam = va_arg(args, id);
     }
     //3.清空参数列表，
     va_end(args);
-    dispatch_main_async_safe(^{
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
-    if(methodSignature) {
-        //执行主题对应的
-        [self invokeInvocationWithSeletor:seletor fristParams:params otherParams:muAyOtherParams];
-       
-        //2.缓存invocation
-        [self cacheInvocationObjectWithSeletor:seletor fristParams:params otherParams:muAyOtherParams];
-    }
-        
-    });
+    //执行主题对应的
+    [self invokeInvocationWithSeletor:seletor params:mutableAyParams];
 }
 - (void)removeCacheThemeObjectsAndInvokeWithSeletor:(nonnull SEL)seletor  {
     [self.pickerDict removeObjectForKey:NSStringFromSelector(seletor)];
@@ -62,15 +57,12 @@ dispatch_async(dispatch_get_main_queue(), block);\
  主题出现变化执行的方法
  */
 - (void)gt_updateTheme {
-    dispatch_main_async_safe(^{
-        for(NSMutableArray *ayInvocation in [self.pickerDict allValues]) {
-            NSUInteger currentThemeVersion = [GTThemeManager shareInstance].currentThemeVersion;
-            if(ayInvocation.count > currentThemeVersion) {
-                GTThemeInvocationObject *obj = ayInvocation[currentThemeVersion];
-                [obj invoke];
-            }
-        }
-   });
+    
+    for(NSString *key in [self.pickerDict allKeys]) {
+        SEL seletor = NSSelectorFromString(key);
+        NSMutableArray *params = self.pickerDict[key];
+        [self invokeInvocationWithSeletor:seletor params:params];
+    }
     
 }
 
@@ -78,109 +70,53 @@ dispatch_async(dispatch_get_main_queue(), block);\
  调用对应的主题对应的方法
 
  @param seletor 方法名
- @param params 第一个参数
- @param muAyOtherParams 其他参数的集合
+ @param params 参数
  */
-- (void)invokeInvocationWithSeletor:(SEL)seletor fristParams:(id)params otherParams:(NSMutableArray *)muAyOtherParams {
+- (void)invokeInvocationWithSeletor:(SEL)seletor params:(NSMutableArray *)params {
     
-     NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-    invocation.target = self;
-    invocation.selector = seletor;
-    if(params) {
-         NSUInteger themeVersion = [GTThemeManager shareInstance].currentThemeVersion;
-        if([params isKindOfClass:[NSArray class]]) {
-            //如果可变参数第一个参数是数组的时候
-            NSArray *ayParams = (NSArray *)params;
-            if(ayParams.count > themeVersion) {
-                void *fristParam = (__bridge void *)(ayParams[themeVersion]);
-                [self setArgumentToInvocation:invocation argument:&fristParam atIndex:2];
-                for(int index=0;index<muAyOtherParams.count;index++) {
-                    void *tempParam = [muAyOtherParams[index] pointerValue];
-                    [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index+3];
-                }
+   dispatch_main_async_safe(^{
+    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
+    if(methodSignature) {
+        //当前的主题的版本
+        NSUInteger currentThemeVersion = [GTThemeManager shareInstance].currentThemeVersion;
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+        invocation.target = self;
+        invocation.selector = seletor;
+        for(int i=0;i<params.count&&i<(methodSignature.numberOfArguments-2);i++) {
+            id param = params[i];
+            NSUInteger index = 2+i;
+            //invocationArgument
+            id invocationArgument = nil;
+            if([param isKindOfClass:[NSArray class]]) {
                 
-            }
-        } else {
-            //如果可变参数第一个不是数组的时候（需要判断参数类型是否相符）
-            [self setArgumentToInvocation:invocation argument:(void *)&params atIndex:2];
-            for(int index=0;index<muAyOtherParams.count;index++) {
-                void *tempParam = [muAyOtherParams[index] pointerValue];
-                [self setArgumentToInvocation:invocation argument:&tempParam atIndex:index+3];
-            }
-        }
-        
-    }
-    [invocation invoke];
-}
-
-/**
- 缓存所有的主题的对应的Invocation
-
- @param seletor 方法名
- @param params 第一个参数
- @param muAyOtherParams 其他参数的集合
- */
-- (void)cacheInvocationObjectWithSeletor:(SEL)seletor fristParams:(id)params otherParams:(NSMutableArray *)muAyOtherParams {
-    if(params) {
-        if([params isKindOfClass:[NSArray class]]) {
-            NSArray *ayParams = (NSArray *)params;
-            for(NSUInteger i=0;i<ayParams.count;i++) {
-                NSMutableArray*ayInvocation = [self getAyInvocationFromSeletor:seletor];
-                //构造NSInvocation
-                GTThemeInvocationObject *invocationObject = [[GTThemeInvocationObject alloc] initWithTarget:self selector:seletor];
-                id firstParam = ayParams[i];
-                [invocationObject setArgument:firstParam atIndex:2];
-                
-                for(int index=0;index<muAyOtherParams.count;index++) {
-                    void *tempParam = [muAyOtherParams[index] pointerValue];
-                    if(strcmp([invocationObject.methodSignature getArgumentTypeAtIndex:index+3], "Q") == 0) {
-                        NSNumber *number = [NSNumber numberWithUnsignedInteger:(NSUInteger)tempParam];
-                        [invocationObject setArgument:number atIndex:index+3];
-                    } else {
-                        [invocationObject setArgument:CFBridgingRelease(tempParam) atIndex:index+3];
-                    }
-                    
+                NSArray *ayParam = (NSArray *)param;
+                if(ayParam.count >currentThemeVersion) {
+                    invocationArgument = ayParam[currentThemeVersion];
                 }
-                [ayInvocation addObject:invocationObject];
+            } else {
+                invocationArgument = param;
             }
-        } else {
-            //可变参数第一个不是数组的时候
-            NSMutableArray*ayInvocation = [self getAyInvocationFromSeletor:seletor];
-            //构造NSInvocation
-            GTThemeInvocationObject *invocationObject = [[GTThemeInvocationObject alloc] initWithTarget:self selector:seletor];
-            id firstParam = params;
-             [invocationObject setArgument:firstParam atIndex:2];
-            
-            for(int index=0;index<muAyOtherParams.count;index++) {
-                void *tempParam = [muAyOtherParams[index] pointerValue];
-                [invocationObject setArgument:CFBridgingRelease(tempParam) atIndex:index+3];
+            //
+            const char *argumentType = [methodSignature getArgumentTypeAtIndex:index];
+            if(strcmp(argumentType, "Q")==0) {
+                NSUInteger iArgument = [invocationArgument unsignedIntegerValue];
+                 [invocation setArgument:&iArgument atIndex:index];
+            } else if(strcmp(argumentType,"@")==0){
+                [invocation setArgument:&invocationArgument atIndex:index];
             }
-            [ayInvocation addObject:invocationObject];
         }
-    } else {
-        NSMutableArray*ayInvocation = [self getAyInvocationFromSeletor:seletor];
-        //构造NSInvocation
-        GTThemeInvocationObject *invocationObject = [[GTThemeInvocationObject alloc] initWithTarget:self selector:seletor];
-        [ayInvocation addObject:invocationObject];
-    }
-}
-- (void)setArgumentToInvocation:(NSInvocation *)invocation argument:(void *)argument atIndex:(NSInteger)index {
-    if(invocation){
-        if(index>1 && index< [invocation methodSignature].numberOfArguments && argument!=NULL) {
-            [invocation setArgument:argument atIndex:index];
-        }
-    }
+        [invocation invoke];
+    }});
 }
 #pragma mark set/get
-- (NSMutableArray *)getAyInvocationFromSeletor:(SEL)seletor {
+- (NSMutableArray *)getAyParamsFromSeletor:(SEL)seletor {
     NSString *strSeletor = NSStringFromSelector(seletor);
-    NSMutableArray*ayInvocation = self.pickerDict[strSeletor];
-    if(!ayInvocation) {
-        ayInvocation = [[NSMutableArray alloc] init];
-        [self.pickerDict setObject:ayInvocation forKey:strSeletor];
+    NSMutableArray*ayParams = self.pickerDict[strSeletor];
+    if(!ayParams) {
+        ayParams = [[NSMutableArray alloc] init];
+        [self.pickerDict setObject:ayParams forKey:strSeletor];
     }
-    return ayInvocation;
+    return ayParams;
 }
 - (NSMutableDictionary<NSString *,NSMutableArray<NSInvocation *> *> *)pickerDict {
     

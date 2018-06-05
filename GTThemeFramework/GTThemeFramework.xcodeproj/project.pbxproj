@@ -15,8 +15,6 @@
 		FE3C39E020BCE8C500B1C1C0 /* GTObjectDeallocManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3C39DE20BCE8C500B1C1C0 /* GTObjectDeallocManager.h */; };
 		FE3C39E120BCE8C500B1C1C0 /* GTObjectDeallocManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE3C39DF20BCE8C500B1C1C0 /* GTObjectDeallocManager.m */; };
 		FEB86C7C20C0084200871A84 /* GTThemeDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3C39E220BCE8D800B1C1C0 /* GTThemeDefine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FED3B4DD20C64F9200D7BAE7 /* GTThemeInvocationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = FED3B4DB20C64F9200D7BAE7 /* GTThemeInvocationObject.h */; };
-		FED3B4DE20C64F9200D7BAE7 /* GTThemeInvocationObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FED3B4DC20C64F9200D7BAE7 /* GTThemeInvocationObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,8 +28,6 @@
 		FE3C39DE20BCE8C500B1C1C0 /* GTObjectDeallocManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GTObjectDeallocManager.h; sourceTree = "<group>"; };
 		FE3C39DF20BCE8C500B1C1C0 /* GTObjectDeallocManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GTObjectDeallocManager.m; sourceTree = "<group>"; };
 		FE3C39E220BCE8D800B1C1C0 /* GTThemeDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GTThemeDefine.h; sourceTree = "<group>"; };
-		FED3B4DB20C64F9200D7BAE7 /* GTThemeInvocationObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GTThemeInvocationObject.h; sourceTree = "<group>"; };
-		FED3B4DC20C64F9200D7BAE7 /* GTThemeInvocationObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GTThemeInvocationObject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,8 +69,6 @@
 				FE3C39DF20BCE8C500B1C1C0 /* GTObjectDeallocManager.m */,
 				FE3C39D620BCE89700B1C1C0 /* NSObject+GTTheme.h */,
 				FE3C39D720BCE89700B1C1C0 /* NSObject+GTTheme.m */,
-				FED3B4DB20C64F9200D7BAE7 /* GTThemeInvocationObject.h */,
-				FED3B4DC20C64F9200D7BAE7 /* GTThemeInvocationObject.m */,
 			);
 			path = GTThemeFramework;
 			sourceTree = "<group>";
@@ -88,7 +82,6 @@
 			files = (
 				FEB86C7C20C0084200871A84 /* GTThemeDefine.h in Headers */,
 				FE3C39DC20BCE8A900B1C1C0 /* GTThemeManager.h in Headers */,
-				FED3B4DD20C64F9200D7BAE7 /* GTThemeInvocationObject.h in Headers */,
 				FE3C39D820BCE89700B1C1C0 /* NSObject+GTTheme.h in Headers */,
 				FE3C39CC20BCE4D500B1C1C0 /* GTThemeFramework.h in Headers */,
 				FE3C39E020BCE8C500B1C1C0 /* GTObjectDeallocManager.h in Headers */,
@@ -165,7 +158,6 @@
 				FE3C39E120BCE8C500B1C1C0 /* GTObjectDeallocManager.m in Sources */,
 				FE3C39DD20BCE8A900B1C1C0 /* GTThemeManager.m in Sources */,
 				FE3C39D920BCE89700B1C1C0 /* NSObject+GTTheme.m in Sources */,
-				FED3B4DE20C64F9200D7BAE7 /* GTThemeInvocationObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

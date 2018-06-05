@@ -9,25 +9,20 @@
 #import "ViewController.h"
 #import <GTThemeFramework/GTThemeFramework.h>
 #import <objc/runtime.h>
-#define GSKeyPath(OBJ, PATH) \
-@(((void)(NO && ((void)[OBJ PATH], NO)), #PATH))
-
-#define GTMethodInvoke(OBJ,SEL,args)  \
-{\
-NSString *str = GSKeyPath(OBJ,SEL);\
- NSMutableArray *array =[NSMutableArray arrayWithArray:[str componentsSeparatedByString:@":"]];\
-for(int i=0;i<array.count;i++) {\
-    if(i%2==1) {\
-        [array replaceObjectAtIndex:i withObject:@""];\
-    }\
-}\
- NSString *strMethod=[array componentsJoinedByString:@":"];\
- SEL seletor = NSSelectorFromString(strMethod);\
- [OBJ cacheThemeObjectsWithSeletor:seletor fristParams:args];\
-}
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UIButton *btnDay;
+@property (weak, nonatomic) IBOutlet UILabel *label;
+@property (weak, nonatomic) IBOutlet UITextField *textField;
+@property (weak, nonatomic) IBOutlet UITextView *textView;
+@property (weak, nonatomic) IBOutlet UIStepper *stepper;
+@property (weak, nonatomic) IBOutlet UIDatePicker *datePicker;
+@property (weak, nonatomic) IBOutlet UISwitch *mySwitch;
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic) IBOutlet UIButton *btnNight;
 
 @end
 
@@ -36,9 +31,10 @@ for(int i=0;i<array.count;i++) {\
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-  
-    NSArray *ayColors = @[[UIColor whiteColor],[UIColor blackColor]];
-//    GTMethodInvoke(self.view, setBackgroundColor:nil, ayColors);
+    self.btnDay.selected = YES;
+    [self.btnDay gt_setThemeObjectsAndInvokeWithSeletor:@selector(setTitleColor:forState:) params:@[[UIColor blackColor],[UIColor whiteColor]],@(UIControlStateSelected), nil];
+//    [self gt_setThemeObjectsAndInvokeWithSeletor:@selector(setBgViewColor:btnDayTitleColor:labelTextColor:textField:) params:@[[UIColor whiteColor],[UIColor blackColor]],@[[UIColor blackColor],[UIColor whiteColor]],@[[UIColor blackColor],[UIColor whiteColor]],@[[UIColor blackColor],[UIColor whiteColor]], nil];
+    
 }
 
 
@@ -53,5 +49,10 @@ for(int i=0;i<array.count;i++) {\
     [GTThemeManager shareInstance].currentThemeVersion = GTNightVersion;
 }
 
-
+- (void)setBgViewColor:(UIColor *)bgColor btnDayTitleColor:(UIColor *)dayTitleColor  labelTextColor:(UIColor *)labelTextColor textField:(UIColor *)textColor {
+    self.view.backgroundColor = bgColor;
+    [self.btnDay setTitleColor:dayTitleColor forState:UIControlStateNormal];
+    [self.label setTextColor:labelTextColor];
+    [self.textView setTextColor:textColor];
+}
 @end

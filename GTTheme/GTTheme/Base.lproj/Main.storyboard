@@ -104,7 +104,17 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicatorView" destination="8CT-v4-exP" id="nAN-jx-iRg"/>
+                        <outlet property="btnDay" destination="pV1-Dc-IqG" id="ihL-SL-MkE"/>
+                        <outlet property="btnNight" destination="Sid-8t-L0x" id="Bap-vJ-clk"/>
+                        <outlet property="datePicker" destination="Fm3-kH-I7c" id="a0r-It-10b"/>
                         <outlet property="imageView" destination="MBl-cb-1Nr" id="fQU-vR-9I6"/>
+                        <outlet property="label" destination="2n8-Y1-OQx" id="Ynk-Pu-bKW"/>
+                        <outlet property="mySwitch" destination="gKE-pi-pFQ" id="Mum-pw-tE3"/>
+                        <outlet property="progressView" destination="sZZ-Jl-fuJ" id="pio-5h-qLe"/>
+                        <outlet property="stepper" destination="d34-E5-AdK" id="vsA-6J-U8a"/>
+                        <outlet property="textField" destination="x2U-Mu-Ten" id="pGX-aE-hp2"/>
+                        <outlet property="textView" destination="LwD-H0-ia6" id="O8h-ed-Wjq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
