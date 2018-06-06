@@ -123,6 +123,7 @@ dispatch_async(dispatch_get_main_queue(), block);\
 - (void *)getSafeArgument:(id)invocationArgument targetArgumentType:(const char *)argumentType {
     void *returnValue =NULL;
     if(strcmp(argumentType, "Q")==0) {
+        //NSUInteger 类型
         if([invocationArgument isKindOfClass:[NSNumber class]]) {
             NSUInteger iArgument = [invocationArgument unsignedIntegerValue];
             returnValue = (void *)iArgument;
@@ -131,12 +132,14 @@ dispatch_async(dispatch_get_main_queue(), block);\
         }
         
     } else if(strcmp(argumentType,"@")==0){
+        //NSObject 类型
         if([invocationArgument isKindOfClass:[NSObject class]]) {
             returnValue = (__bridge void *)invocationArgument;
         } else {
             [self logArgumentErrorMessage];
         }
     } else if (strcmp(argumentType, "^{CGColor=}")==0) {
+        //CGColor 类型
         if([invocationArgument isKindOfClass:[UIColor class]]) {
             UIColor *tempColor = (UIColor *)invocationArgument;
             CGColorRef color = tempColor.CGColor;
@@ -145,7 +148,25 @@ dispatch_async(dispatch_get_main_queue(), block);\
             returnValue= (__bridge void *)invocationArgument;
         }
         
-    } else {
+    } else if (strcmp(argumentType, "B")==0) {
+        //bool 类型的
+        if([invocationArgument isKindOfClass:[NSNumber class]]) {
+            NSUInteger iArgument = [invocationArgument boolValue];
+            returnValue = (void *)iArgument;
+        } else {
+            [self logArgumentErrorMessage];
+        }
+    } else if (strcmp(argumentType, "{CGRect={CGPoint=dd}{CGSize=dd}}")==0) {
+        CGRect rect = CGRectZero;
+        if([invocationArgument isKindOfClass:[NSValue class]]) {
+            rect = ((NSValue *)invocationArgument).CGRectValue;
+        } else if([invocationArgument isKindOfClass:[NSString class]]) {
+            rect = CGRectFromString(invocationArgument);
+        } else {
+            returnValue = (__bridge void *)invocationArgument;
+        }
+    }
+    else {
         returnValue= (__bridge void *)invocationArgument;
     }
     return returnValue;
