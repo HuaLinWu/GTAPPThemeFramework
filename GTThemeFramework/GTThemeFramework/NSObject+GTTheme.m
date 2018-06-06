@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import "GTThemeManager.h"
 #import "GTObjectDeallocManager.h"
+#import <UIKit/UIKit.h>
 //安全的主线成执行
 #ifndef dispatch_main_async_safe
 #define dispatch_main_async_safe(block)\
@@ -19,13 +20,14 @@ block();\
 dispatch_async(dispatch_get_main_queue(), block);\
 }
 #endif
+
 @interface NSObject()
 @property(nonatomic,strong)NSMutableDictionary<NSString *,NSMutableArray<id> *> *pickerDict;
 @end
 @implementation NSObject (GTTheme)
 #pragma mark public
 
-- (void)gt_setThemeObjectsAndInvokeWithSeletor:(SEL)seletor params:(id _Nonnull)params,...NS_REQUIRES_NIL_TERMINATION {
+- (void)gt_setThemeObjectsAndInvokeWithSeletor:(SEL)seletor params:(id _Nullable)params,...NS_REQUIRES_NIL_TERMINATION {
     //获取已有的参数列表数组，如果不存在就新建一个
     NSMutableArray *mutableAyParams = [self getAyParamsFromSeletor:seletor];
     if(params) {
@@ -44,12 +46,8 @@ dispatch_async(dispatch_get_main_queue(), block);\
     //执行主题对应的
     [self invokeInvocationWithSeletor:seletor params:mutableAyParams];
 }
-- (void)removeCacheThemeObjectsAndInvokeWithSeletor:(nonnull SEL)seletor  {
+- (void)gt_removeCacheThemeObjectsWithSeletor:(nonnull SEL)seletor  {
     [self.pickerDict removeObjectForKey:NSStringFromSelector(seletor)];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    [self performSelector:seletor withObject:nil];
-#pragma clang diagnostic pop
 }
 #pragma mark private_method
 
@@ -68,45 +66,47 @@ dispatch_async(dispatch_get_main_queue(), block);\
 
 /**
  调用对应的主题对应的方法
-
+ 
  @param seletor 方法名
  @param params 参数
  */
-- (void)invokeInvocationWithSeletor:(SEL)seletor params:(NSMutableArray *)params {
+- (void)invokeInvocationWithSeletor:(SEL)seletor params:(NSArray *)params {
     
-   dispatch_main_async_safe(^{
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
-    if(methodSignature) {
-        //当前的主题的版本
-        NSUInteger currentThemeVersion = [GTThemeManager shareInstance].currentThemeVersion;
-        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-        invocation.target = self;
-        invocation.selector = seletor;
-        for(int i=0;i<params.count&&i<(methodSignature.numberOfArguments-2);i++) {
-            id param = params[i];
-            NSUInteger index = 2+i;
-            //invocationArgument
-            id invocationArgument = nil;
-            if([param isKindOfClass:[NSArray class]]) {
-                
-                NSArray *ayParam = (NSArray *)param;
-                if(ayParam.count >currentThemeVersion) {
-                    invocationArgument = ayParam[currentThemeVersion];
+    dispatch_main_async_safe(^{
+        NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
+        if(methodSignature) {
+            //当前的主题的版本
+            NSUInteger currentThemeVersion = [GTThemeManager shareInstance].currentThemeVersion;
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+            invocation.target = self;
+            invocation.selector = seletor;
+            for(int i=0;i<params.count&&i<(methodSignature.numberOfArguments-2);i++) {
+                id param = params[i];
+                NSUInteger index = 2+i;
+                //invocationArgument
+                id invocationArgument = nil;
+                if([param isKindOfClass:[NSArray class]]) {
+                    
+                    NSArray *ayParam = (NSArray *)param;
+                    if(ayParam.count >currentThemeVersion) {
+                        invocationArgument = ayParam[currentThemeVersion];
+                    }
+                } else {
+                    invocationArgument = param;
                 }
-            } else {
-                invocationArgument = param;
+                //
+                const char *argumentType = [methodSignature getArgumentTypeAtIndex:index];
+                void *tempInvocationArgument = [self getSafeArgument:invocationArgument targetArgumentType:argumentType];
+                [invocation setArgument:&tempInvocationArgument atIndex:index];
+                
             }
-            //
-            const char *argumentType = [methodSignature getArgumentTypeAtIndex:index];
-            if(strcmp(argumentType, "Q")==0) {
-                NSUInteger iArgument = [invocationArgument unsignedIntegerValue];
-                 [invocation setArgument:&iArgument atIndex:index];
-            } else if(strcmp(argumentType,"@")==0){
-                [invocation setArgument:&invocationArgument atIndex:index];
-            }
-        }
-        [invocation invoke];
-    }});
+            [invocation invoke];
+        }});
+}
+- (void)logArgumentErrorMessage{
+#ifdef DEBUG
+    NSLog(@"参数出错了");
+#endif
 }
 #pragma mark set/get
 - (NSMutableArray *)getAyParamsFromSeletor:(SEL)seletor {
@@ -115,8 +115,40 @@ dispatch_async(dispatch_get_main_queue(), block);\
     if(!ayParams) {
         ayParams = [[NSMutableArray alloc] init];
         [self.pickerDict setObject:ayParams forKey:strSeletor];
+    } else {
+        [ayParams removeAllObjects];
     }
     return ayParams;
+}
+- (void *)getSafeArgument:(id)invocationArgument targetArgumentType:(const char *)argumentType {
+    void *returnValue =NULL;
+    if(strcmp(argumentType, "Q")==0) {
+        if([invocationArgument isKindOfClass:[NSNumber class]]) {
+            NSUInteger iArgument = [invocationArgument unsignedIntegerValue];
+            returnValue = (void *)iArgument;
+        } else {
+            [self logArgumentErrorMessage];
+        }
+        
+    } else if(strcmp(argumentType,"@")==0){
+        if([invocationArgument isKindOfClass:[NSObject class]]) {
+            returnValue = (__bridge void *)invocationArgument;
+        } else {
+            [self logArgumentErrorMessage];
+        }
+    } else if (strcmp(argumentType, "^{CGColor=}")==0) {
+        if([invocationArgument isKindOfClass:[UIColor class]]) {
+            UIColor *tempColor = (UIColor *)invocationArgument;
+            CGColorRef color = tempColor.CGColor;
+            returnValue = color;
+        } else {
+            returnValue= (__bridge void *)invocationArgument;
+        }
+        
+    } else {
+        returnValue= (__bridge void *)invocationArgument;
+    }
+    return returnValue;
 }
 - (NSMutableDictionary<NSString *,NSMutableArray<NSInvocation *> *> *)pickerDict {
     

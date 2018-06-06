@@ -15,7 +15,7 @@
 NSSelectorFromString([NSString stringWithFormat:@"set%@%@:",[[@(#PATH) substringToIndex:1] uppercaseString],[@(#PATH) substringFromIndex:1]])
 /**
  设置对象属性的方法调用
-
+ 
  @param OBJ 对象
  @param PATH 数显
  @return 返回
@@ -26,10 +26,10 @@ NSSelectorFromString([NSString stringWithFormat:@"set%@%@:",[[@(#PATH) substring
 
 #define GTRemoveThemeObjectsAndInvoke(OBJ,PATH)\
 ((void)(NO && ((void)OBJ.PATH, NO)),\
-[OBJ gt_setThemeObjectsAndInvokeWithSeletor:GTThemeGetMethodForProperty(PATH) params:nil])
+[OBJ gt_removeCacheThemeObjectsWithSeletor:GTThemeGetMethodForProperty(PATH)])
 /**
  主题的枚举
-
+ 
  - GTDayVersion: 白天
  - GTNightVersion: 黑夜
  */
@@ -39,3 +39,4 @@ typedef NS_ENUM(NSUInteger,GTThemeVersion) {
 };
 
 #endif /* GTThemeDefine_h */
+
