@@ -20,7 +20,6 @@ block();\
 dispatch_async(dispatch_get_main_queue(), block);\
 }
 #endif
-
 @interface NSObject()
 @property(nonatomic,strong)NSMutableDictionary<NSString *,NSMutableArray<id> *> *pickerDict;
 @end
@@ -72,7 +71,7 @@ dispatch_async(dispatch_get_main_queue(), block);\
  */
 - (void)invokeInvocationWithSeletor:(SEL)seletor params:(NSArray *)params {
     
-    dispatch_main_async_safe(^{
+//    dispatch_main_async_safe(^{
         NSMethodSignature *methodSignature = [self methodSignatureForSelector:seletor];
         if(methodSignature) {
             //当前的主题的版本
@@ -96,12 +95,118 @@ dispatch_async(dispatch_get_main_queue(), block);\
                 }
                 //
                 const char *argumentType = [methodSignature getArgumentTypeAtIndex:index];
-                void *tempInvocationArgument = [self getSafeArgument:invocationArgument targetArgumentType:argumentType];
-                [invocation setArgument:&tempInvocationArgument atIndex:index];
+                
+                NSValue *value = [self getSafeArgument:invocationArgument targetArgumentType:argumentType];
+                
+                void *tempInvocationArgument = NULL;
+                
+                if (strcmp(argumentType, "@") == 0) {
+                    id object = nil;
+                    if([value respondsToSelector:@selector(getValue:size:)]) {
+                        
+                        [value getValue:&object size:sizeof(id)];
+                        
+                    } else if ([value respondsToSelector:@selector(getValue:)]) {
+                        
+                        [value getValue:&object];
+                    }
+                    tempInvocationArgument = &object;
+                    
+                } else if (strcmp(argumentType, "^{CGColor=}")==0) {
+                    
+                    CGColorRef color = NULL;
+                    if([value respondsToSelector:@selector(getValue:size:)]) {
+                        
+                        [value getValue:&color size:sizeof(CGColorRef)];
+                        
+                    } else if ([value respondsToSelector:@selector(getValue:)]) {
+                        
+                        [value getValue:&color];
+                    }
+                    tempInvocationArgument = &color;
+                    
+                } else if (strcmp(argumentType, "Q") == 0) {
+                    NSUInteger uInteger = 0;
+                    if([value respondsToSelector:@selector(getValue:size:)]) {
+                        
+                        [value getValue:&uInteger size:sizeof(NSUInteger)];
+                        
+                    } else if ([value respondsToSelector:@selector(getValue:)]) {
+                        
+                        [value getValue:&uInteger];
+                    }
+                     tempInvocationArgument = &uInteger;
+                    
+                } else if (strcmp(argumentType, "B")==0) {
+                    
+                    BOOL boolValue = NO;
+                    if([value respondsToSelector:@selector(getValue:size:)]) {
+                        
+                        [value getValue:&boolValue size:sizeof(BOOL)];
+                        
+                    } else if ([value respondsToSelector:@selector(getValue:)]) {
+                        
+                        [value getValue:&boolValue];
+                    }
+                    tempInvocationArgument = &boolValue;
+                    
+                } else if (strcmp(argumentType, "{CGRect={CGPoint=dd}{CGSize=dd}}")==0) {
+                    CGRect rect = CGRectZero;
+                    if([value respondsToSelector:@selector(getValue:size:)]) {
+                        
+                        [value getValue:&rect size:sizeof(CGRect)];
+                        
+                    } else if ([value respondsToSelector:@selector(getValue:)]) {
+                        
+                        [value getValue:&rect];
+                    }
+                    tempInvocationArgument = &rect;
+                    
+                } else if (strcmp(argumentType, "i") == 0) {
+                    int intValue = 0;
+                    if([value respondsToSelector:@selector(getValue:size:)]) {
+                        
+                        [value getValue:&intValue size:sizeof(int)];
+                        
+                    } else if ([value respondsToSelector:@selector(getValue:)]) {
+                        
+                        [value getValue:&intValue];
+                    }
+                    tempInvocationArgument = &intValue;
+                } if(strcmp(argumentType, "c") == 0) {
+                    
+                } else if (strcmp(argumentType, "s") == 0) {
+                    
+                } else if (strcmp(argumentType, "l") == 0) {
+                    
+                } else if (strcmp(argumentType, "q") == 0) {
+                    
+                } else if (strcmp(argumentType, "C") == 0) {
+                    
+                } else if (strcmp(argumentType, "I") == 0) {
+                    
+                } else if (strcmp(argumentType, "S") == 0) {
+                    
+                } else if (strcmp(argumentType, "L") == 0) {
+                    
+                } else if (strcmp(argumentType, "f") == 0) {
+                    
+                } else if (strcmp(argumentType, "d") == 0) {
+                    
+                } else if (strcmp(argumentType, "#") == 0) {
+                    
+                } else if (strcmp(argumentType, ":")==0) {
+                    
+                } else if (strcmp(argumentType, "?")) {
+                    
+                } else if (strcmp(argumentType, "*")) {
+                    
+                }
+                [invocation setArgument:tempInvocationArgument atIndex:index];
                 
             }
             [invocation invoke];
-        }});
+        }//});
 }
 - (void)logArgumentErrorMessage{
 #ifdef DEBUG
@@ -120,54 +225,84 @@ dispatch_async(dispatch_get_main_queue(), block);\
     }
     return ayParams;
 }
-- (void *)getSafeArgument:(id)invocationArgument targetArgumentType:(const char *)argumentType {
-    void *returnValue =NULL;
+- (NSValue *)getSafeArgument:(id)invocationArgument targetArgumentType:(const char *)argumentType {
+    
+    NSValue *returnValue = nil;
     if(strcmp(argumentType, "Q")==0) {
         //NSUInteger 类型
         if([invocationArgument isKindOfClass:[NSNumber class]]) {
+            
             NSUInteger iArgument = [invocationArgument unsignedIntegerValue];
-            returnValue = (void *)iArgument;
+            returnValue = [NSValue value:&iArgument withObjCType:"Q"];
+            
         } else {
+            
             [self logArgumentErrorMessage];
         }
         
     } else if(strcmp(argumentType,"@")==0){
         //NSObject 类型
         if([invocationArgument isKindOfClass:[NSObject class]]) {
-            returnValue = (__bridge void *)invocationArgument;
+            
+            returnValue = [NSValue value:&invocationArgument withObjCType:"@"];
+            
         } else {
+            
             [self logArgumentErrorMessage];
         }
     } else if (strcmp(argumentType, "^{CGColor=}")==0) {
         //CGColor 类型
         if([invocationArgument isKindOfClass:[UIColor class]]) {
+            
             UIColor *tempColor = (UIColor *)invocationArgument;
             CGColorRef color = tempColor.CGColor;
-            returnValue = color;
+            returnValue = [NSValue value:&color withObjCType:"^{CGColor=}"];
+            
+        } else if(sizeof(invocationArgument) == sizeof(CGColorRef)){
+            
+            returnValue= [NSValue value:&invocationArgument withObjCType:"^{CGColor=}"];
+            
         } else {
-            returnValue= (__bridge void *)invocationArgument;
+            
+            [self logArgumentErrorMessage];
         }
         
     } else if (strcmp(argumentType, "B")==0) {
         //bool 类型的
         if([invocationArgument isKindOfClass:[NSNumber class]]) {
-            NSUInteger iArgument = [invocationArgument boolValue];
-            returnValue = (void *)iArgument;
+            
+            BOOL iArgument = [(NSNumber *)invocationArgument boolValue];
+            returnValue = [NSValue value:&iArgument withObjCType:"B"];
+            
+        } else if([invocationArgument isKindOfClass:[NSString class]]) {
+            
+            BOOL iArgument = [(NSString *)invocationArgument boolValue];
+             returnValue = [NSValue value:&iArgument withObjCType:"B"];
+            
+        } else {
+            
+             [self logArgumentErrorMessage];
+        }
+    } else if (strcmp(argumentType, "{CGRect={CGPoint=dd}{CGSize=dd}}")==0) {
+        
+        CGRect rect = CGRectZero;
+        if([invocationArgument isKindOfClass:[NSValue class]]) {
+            
+            rect = ((NSValue *)invocationArgument).CGRectValue;
+            returnValue = [NSValue value:&rect withObjCType:"{CGRect={CGPoint=dd}{CGSize=dd}}"];
+            
+        } else if([invocationArgument isKindOfClass:[NSString class]]) {
+            
+            rect = CGRectFromString(invocationArgument);
+            returnValue = [NSValue value:&rect withObjCType:"{CGRect={CGPoint=dd}{CGSize=dd}}"];
+            
         } else {
             [self logArgumentErrorMessage];
         }
-    } else if (strcmp(argumentType, "{CGRect={CGPoint=dd}{CGSize=dd}}")==0) {
-        CGRect rect = CGRectZero;
-        if([invocationArgument isKindOfClass:[NSValue class]]) {
-            rect = ((NSValue *)invocationArgument).CGRectValue;
-        } else if([invocationArgument isKindOfClass:[NSString class]]) {
-            rect = CGRectFromString(invocationArgument);
-        } else {
-            returnValue = (__bridge void *)invocationArgument;
-        }
+        
     }
     else {
-        returnValue= (__bridge void *)invocationArgument;
+        returnValue = [NSValue value:&invocationArgument withObjCType:argumentType];
     }
     return returnValue;
 }
